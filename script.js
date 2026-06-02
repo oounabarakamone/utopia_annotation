@@ -77,51 +77,71 @@ const lyricsText = `&quot;誰も神様じゃない　
 君が&quot;`;
 
 let notes = {};
+let aliasEntries = [];
 
 async function loadNotes() {
   const response = await fetch("notes.json");
   notes = await response.json();
+  aliasEntries = buildAliasList();
   renderLyrics();
-}
-
-function escapeHtml(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
 }
 
 function buildAliasList() {
   const list = [];
   for (const [key, note] of Object.entries(notes)) {
     for (const alias of note.aliases || [key]) {
+      if (!alias) continue;
       list.push({ key, alias });
     }
   }
+
+  // 長い語句を優先。「夏の夢」が「夢」より先に拾われる。
   return list.sort((a, b) => b.alias.length - a.alias.length);
 }
 
 function renderLyrics() {
-  const aliases = buildAliasList();
-  let html = escapeHtml(lyricsText);
+  const container = document.getElementById("lyrics");
+  container.textContent = "";
+  const fragment = document.createDocumentFragment();
 
-  for (const { key, alias } of aliases) {
-    const escapedAlias = escapeHtml(alias);
-    const pattern = new RegExp(escapedAlias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
-    html = html.replace(pattern, `<span class="term" tabindex="0" data-key="${key}">${escapedAlias}</span>`);
+  let i = 0;
+
+  while (i < lyricsText.length) {
+    const match = findMatchAt(lyricsText, i);
+
+    if (match) {
+      const span = document.createElement("span");
+      span.className = "term";
+      span.tabIndex = 0;
+      span.dataset.key = match.key;
+      span.textContent = match.alias;
+
+      span.addEventListener("click", () => openNote(match.key));
+      span.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openNote(match.key);
+        }
+      });
+
+      fragment.appendChild(span);
+      i += match.alias.length;
+    } else {
+      fragment.appendChild(document.createTextNode(lyricsText[i]));
+      i += 1;
+    }
   }
 
-  document.getElementById("lyrics").innerHTML = html;
+  container.appendChild(fragment);
+}
 
-  document.querySelectorAll(".term").forEach(el => {
-    el.addEventListener("click", () => openNote(el.dataset.key));
-    el.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openNote(el.dataset.key);
-      }
-    });
-  });
+function findMatchAt(text, index) {
+  for (const entry of aliasEntries) {
+    if (text.startsWith(entry.alias, index)) {
+      return entry;
+    }
+  }
+  return null;
 }
 
 function openNote(key) {
@@ -141,5 +161,8 @@ function closeNote() {
 
 document.getElementById("closeNote").addEventListener("click", closeNote);
 document.getElementById("overlay").addEventListener("click", closeNote);
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeNote();
+});
 
 loadNotes();
