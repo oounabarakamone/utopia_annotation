@@ -29,6 +29,10 @@ h1 {
 .lyrics {
   white-space: pre-wrap;
   font-size: 1.08rem;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", serif;
+}
+  white-space: pre-wrap;
+  font-size: 1.08rem;
 }
 
 .term {
