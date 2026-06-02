@@ -41,7 +41,8 @@ const norito = findNoritoAt(lyricsText, i);
 if (norito) {
   const span = document.createElement("span");
   span.className = "norito";
-  span.textContent = norito.text;
+
+  appendAnnotatedText(span, norito.text);
 
   fragment.appendChild(span);
 
