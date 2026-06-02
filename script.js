@@ -36,7 +36,7 @@ function renderLyrics() {
   let i = 0;
 
   while (i < lyricsText.length) {
-    const norito = findNoritoAt(lyricsText, i);
+  const norito = findNoritoAt(lyricsText, i);
 
 if (norito) {
   const span = document.createElement("span");
