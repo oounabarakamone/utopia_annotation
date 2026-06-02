@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ユートピア注釈</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>ユートピア注釈</h1>
+      <p class="sub">語句をタップすると解釈が表示されます。</p>
+    </header>
+
+    <section id="lyrics" class="lyrics" aria-label="歌詞本文"></section>
+  </main>
+
+  <div id="overlay" class="overlay" hidden></div>
+  <aside id="notePanel" class="note-panel" hidden aria-live="polite">
+    <button id="closeNote" class="close" aria-label="閉じる">×</button>
+    <h2 id="noteTitle"></h2>
+    <p id="noteBody"></p>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
