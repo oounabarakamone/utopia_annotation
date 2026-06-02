@@ -36,6 +36,18 @@ function renderLyrics() {
   let i = 0;
 
   while (i < lyricsText.length) {
+    const norito = findNoritoAt(lyricsText, i);
+
+if (norito) {
+  const span = document.createElement("span");
+  span.className = "norito";
+  span.textContent = norito.text;
+
+  fragment.appendChild(span);
+
+  i += norito.length;
+  continue;
+}
     const match = findMatchAt(lyricsText, i);
 
     if (match) {
