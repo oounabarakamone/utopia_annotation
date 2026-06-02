@@ -100,6 +100,36 @@ function findNoritoAt(text, index) {
   };
 }
 
+function appendAnnotatedText(parent, text) {
+  let i = 0;
+
+  while (i < text.length) {
+    const match = findMatchAt(text, i);
+
+    if (match) {
+      const span = document.createElement("span");
+      span.className = "term";
+      span.tabIndex = 0;
+      span.dataset.key = match.key;
+      span.textContent = match.alias;
+
+      span.addEventListener("click", () => openNote(match.key));
+      span.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openNote(match.key);
+        }
+      });
+
+      parent.appendChild(span);
+      i += match.alias.length;
+    } else {
+      parent.appendChild(document.createTextNode(text[i]));
+      i += 1;
+    }
+  }
+}
+
 function openNote(key) {
   const note = notes[key];
   if (!note) return;
