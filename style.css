@@ -35,6 +35,11 @@ h1 {
   font-size: 1.08rem;
 }
 
+.norito {
+  font-family: "Yu Mincho", serif;
+  letter-spacing: 0.08em;
+}
+
 .term {
   cursor: pointer;
   text-decoration: underline dotted;
