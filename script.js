@@ -74,6 +74,19 @@ function findMatchAt(text, index) {
   return null;
 }
 
+function findNoritoAt(text, index) {
+  if (text[index] !== '"') return null;
+
+  const end = text.indexOf('"', index + 1);
+
+  if (end === -1) return null;
+
+  return {
+    text: text.slice(index, end + 1),
+    length: end - index + 1
+  };
+}
+
 function openNote(key) {
   const note = notes[key];
   if (!note) return;
