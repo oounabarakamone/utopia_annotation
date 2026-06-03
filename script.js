@@ -36,29 +36,7 @@ function renderLyrics() {
   let i = 0;
 
   while (i < lyricsText.length) {
-    const tagged = findTaggedMeaningAt(lyricsText, i);
-
-if (tagged) {
-  const span = document.createElement("span");
-  span.className = "term";
-  span.tabIndex = 0;
-  span.dataset.key = tagged.key;
-  span.dataset.meaningIds = tagged.meaningIds.join(",");
-  span.textContent = tagged.alias;
-
-  span.addEventListener("click", () => openNote(tagged.key, tagged.meaningIds));
-  span.addEventListener("keydown", event => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openNote(tagged.key, tagged.meaningIds);
-    }
-  });
-
-  fragment.appendChild(span);
-  i += tagged.length;
-  continue;
-}
-const norito = findNoritoAt(lyricsText, i);
+    const norito = findNoritoAt(lyricsText, i);
 
 if (norito) {
   const span = document.createElement("span");
@@ -71,6 +49,28 @@ if (norito) {
   i += norito.length;
   continue;
 }
+    const tagged = findTaggedMeaningAt(lyricsText, i);
+    if (tagged) {
+      const span = document.createElement("span");
+      span.className = "term";
+      span.tabIndex = 0;
+      span.dataset.key = tagged.key;
+      span.dataset.meaningIds = tagged.meaningIds.join(",");
+      span.textContent = tagged.alias;
+
+      span.addEventListener("click", () => openNote(tagged.key, tagged.meaningIds));
+      span.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openNote(tagged.key, tagged.meaningIds);
+    }
+  });
+
+  fragment.appendChild(span);
+  i += tagged.length;
+  continue;
+}
+
     const match = findMatchAt(lyricsText, i);
 
     if (match) {
