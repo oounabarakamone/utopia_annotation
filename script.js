@@ -36,6 +36,28 @@ function renderLyrics() {
   let i = 0;
 
   while (i < lyricsText.length) {
+    const tagged = findTaggedMeaningAt(lyricsText, i);
+
+if (tagged) {
+  const span = document.createElement("span");
+  span.className = "term";
+  span.tabIndex = 0;
+  span.dataset.key = tagged.key;
+  span.dataset.meaningIds = tagged.meaningIds.join(",");
+  span.textContent = tagged.alias;
+
+  span.addEventListener("click", () => openNote(tagged.key, tagged.meaningIds));
+  span.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openNote(tagged.key, tagged.meaningIds);
+    }
+  });
+
+  fragment.appendChild(span);
+  i += tagged.length;
+  continue;
+}
 const norito = findNoritoAt(lyricsText, i);
 
 if (norito) {
@@ -86,7 +108,33 @@ function findMatchAt(text, index) {
 
   return null;
 }
+function findTaggedMeaningAt(text, index) {
+  for (const entry of aliasEntries) {
+    const prefix = entry.alias + "{";
 
+    if (!text.startsWith(prefix, index)) continue;
+
+    const start = index + prefix.length;
+    const end = text.indexOf("}", start);
+
+    if (end === -1) return null;
+
+    const meaningIds = text
+      .slice(start, end)
+      .split(",")
+      .map(id => id.trim())
+      .filter(Boolean);
+
+    return {
+      key: entry.key,
+      alias: entry.alias,
+      meaningIds,
+      length: end - index + 1
+    };
+  }
+
+  return null;
+}
 function findNoritoAt(text, index) {
   if (text[index] !== '"') return null;
 
@@ -130,12 +178,31 @@ function appendAnnotatedText(parent, text) {
   }
 }
 
-function openNote(key) {
+function openNote(key, meaningIds = null) {
   const note = notes[key];
   if (!note) return;
 
   document.getElementById("noteTitle").textContent = note.title;
-  document.getElementById("noteBody").textContent = note.body;
+
+  const noteBody = document.getElementById("noteBody");
+
+  if (note.meanings && meaningIds) {
+    noteBody.innerHTML = meaningIds
+      .map(id => `${id}. ${note.meanings[id]}`)
+      .filter(Boolean)
+      .join("<br>");
+  } else if (note.meanings) {
+    noteBody.innerHTML = Object.entries(note.meanings)
+      .map(([id, text]) => `${id}. ${text}`)
+      .join("<br>");
+  } else if (Array.isArray(note.body)) {
+    noteBody.innerHTML = note.body
+      .map((item, index) => `${index + 1}. ${item}`)
+      .join("<br>");
+  } else {
+    noteBody.textContent = note.body;
+  }
+
   document.getElementById("overlay").hidden = false;
   document.getElementById("notePanel").hidden = false;
 }
