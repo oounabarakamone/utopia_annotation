@@ -37,18 +37,15 @@ function renderLyrics() {
 
   while (i < lyricsText.length) {
     const norito = findNoritoAt(lyricsText, i);
-
-if (norito) {
-  const span = document.createElement("span");
-  span.className = "norito";
-
-  appendAnnotatedText(span, norito.text);
-
-  fragment.appendChild(span);
-
-  i += norito.length;
-  continue;
-}
+    if (norito) {
+      const span = document.createElement("span");
+      span.className = "norito";
+      
+      appendAnnotatedText(span, norito.text);
+      fragment.appendChild(span);
+      i += norito.length;
+      continue;
+    }
     const tagged = findTaggedMeaningAt(lyricsText, i);
     if (tagged) {
       const span = document.createElement("span");
