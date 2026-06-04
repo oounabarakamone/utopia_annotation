@@ -37,16 +37,21 @@ function renderLyrics() {
 
   while (i < lyricsText.length) {
     const norito = findNoritoAt(lyricsText, i);
+    
     if (norito) {
       const span = document.createElement("span");
       span.className = "norito";
       
       appendAnnotatedText(span, norito.text);
+      
       fragment.appendChild(span);
+      
       i += norito.length;
       continue;
     }
+    
     const tagged = findTaggedMeaningAt(lyricsText, i);
+    
     if (tagged) {
       const span = document.createElement("span");
       span.className = "term";
@@ -57,16 +62,16 @@ function renderLyrics() {
 
       span.addEventListener("click", () => openNote(tagged.key, tagged.meaningIds));
       span.addEventListener("keydown", event => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openNote(tagged.key, tagged.meaningIds);
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openNote(tagged.key, tagged.meaningIds);
+        }
+      });
+      
+      fragment.appendChild(span);
+      i += tagged.length;
+      continue;
     }
-  });
-
-  fragment.appendChild(span);
-  i += tagged.length;
-  continue;
-}
 
     const match = findMatchAt(lyricsText, i);
 
