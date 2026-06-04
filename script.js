@@ -154,6 +154,29 @@ function appendAnnotatedText(parent, text) {
   let i = 0;
 
   while (i < text.length) {
+    const tagged = findTaggedMeaningAt(text, i);
+
+    if (tagged) {
+      const span = document.createElement("span");
+      span.className = "term";
+      span.tabIndex = 0;
+      span.dataset.key = tagged.key;
+      span.dataset.meaningIds = tagged.meaningIds.join(",");
+      span.textContent = tagged.alias;
+
+      span.addEventListener("click", () => openNote(tagged.key, tagged.meaningIds));
+      span.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openNote(tagged.key, tagged.meaningIds);
+        }
+      });
+
+      parent.appendChild(span);
+      i += tagged.length;
+      continue;
+    }
+
     const match = findMatchAt(text, i);
 
     if (match) {
